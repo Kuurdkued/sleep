@@ -164,9 +164,12 @@ export default function SleepCalculator() {
                 className="w-full space-y-6"
               >
                 <Button
+                  as="div"
+                  role="button"
+                  tabIndex={0}
                   onClick={calculateSleepNow}
                   borderRadius="1.5rem"
-                  containerClassName="w-full h-auto mb-6"
+                  containerClassName="w-full h-auto mb-6 cursor-pointer"
                   className="bg-white/5 hover:bg-white/10 border-white/10 p-8 transition-all duration-700 flex items-center justify-between shadow-lg hover:shadow-indigo-500/10"
                   borderClassName="bg-[radial-gradient(var(--color-indigo-500)_40%,transparent_60%)]"
                 >
@@ -254,9 +257,12 @@ export default function SleepCalculator() {
                       </AnimatePresence>
 
                       <Button
+                        as="div"
+                        role="button"
+                        tabIndex={0}
                         onClick={calculateWakeAt}
                         borderRadius="1rem"
-                        containerClassName="w-full h-auto mt-2"
+                        containerClassName="w-full h-auto mt-2 cursor-pointer"
                         className="bg-purple-600/80 hover:bg-purple-500/80 text-white px-8 py-4 transition-all duration-700 w-full shadow-lg shadow-purple-600/20 hover:shadow-purple-500/40 text-lg border-purple-500/50"
                         borderClassName="bg-[radial-gradient(var(--color-purple-400)_40%,transparent_60%)]"
                       >
@@ -325,9 +331,12 @@ export default function SleepCalculator() {
 
                 <div className="flex justify-center">
                   <Button
+                    as="div"
+                    role="button"
+                    tabIndex={0}
                     onClick={reset}
                     borderRadius="1rem"
-                    containerClassName="h-auto"
+                    containerClassName="h-auto cursor-pointer"
                     className="bg-white/5 hover:bg-white/10 border-white/10 text-white px-10 py-4 transition-all duration-700 flex items-center gap-2 text-lg"
                     borderClassName="bg-[radial-gradient(var(--color-indigo-400)_40%,transparent_60%)]"
                   >
@@ -370,7 +379,7 @@ export default function SleepCalculator() {
       </main>
 
       <footer className="py-8 text-center text-indigo-200/40 text-sm border-t border-white/5 mt-auto">
-        <p>© 2026 مافەکان پارێزراون - دروستکراوە لەلایەن Marwan Fon</p>
+        <p>Built with ❤️ by &lt;/&gt; Marwanst</p>
       </footer>
     </div>
   );
