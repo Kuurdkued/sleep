@@ -5,6 +5,13 @@ import { Moon, Sun, Clock, Star, BedDouble, ChevronDown, Brain } from 'lucide-re
 import { motion, AnimatePresence } from 'motion/react';
 import { Typewriter } from '@/components/ui/typewriter';
 import { Button } from '@/components/ui/moving-border';
+import { AlarmManager } from '@/components/AlarmManager';
+import { SoundMixer } from '@/components/SoundMixer';
+import { SleepTracker } from '@/components/SleepTracker';
+import { SleepEducation } from '@/components/SleepEducation';
+import { PremiumBackground } from '@/components/PremiumBackground';
+import { DailySchedule } from '@/components/DailySchedule';
+
 
 type Mode = 'sleep-now' | 'wake-at' | null;
 
@@ -17,6 +24,7 @@ interface CycleResult {
 
 export default function SleepCalculator() {
   const [mode, setMode] = useState<Mode>(null);
+  const [globalSleepTarget, setGlobalSleepTarget] = useState<Date | null>(null);
   
   // Custom Time Picker State
   const [hour, setHour] = useState('07');
@@ -111,8 +119,18 @@ export default function SleepCalculator() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col font-sans selection:bg-purple-500/30 text-white bg-gradient-to-br from-indigo-950 to-slate-950">
-      <main className="flex-grow container mx-auto px-4 py-12 max-w-3xl flex flex-col items-center justify-center">
+    <div className="min-h-screen flex flex-col font-sans selection:bg-purple-500/30 text-white relative z-0">
+      <PremiumBackground />
+      <div className="fixed top-5 right-5 z-[9999]">
+        <button onClick={() => { const el = document.getElementById('hero'); if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' }); else window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="flex items-center gap-2 group hover:scale-105 hover:shadow-[0_0_15px_rgba(165,180,252,0.6)] rounded-xl transition-all duration-300 bg-black/10 backdrop-blur-sm border border-white/5 p-1 pr-3">
+          <div className="bg-indigo-500/20 p-2 rounded-xl text-indigo-300 group-hover:bg-indigo-500/30 transition-all">
+            <Moon className="w-6 h-6" />
+          </div>
+          <span className="text-indigo-200 font-bold hidden sm:inline">خەوتنی زیرەک</span>
+        </button>
+      </div>
+      
+      <main id="hero" className="flex-grow container mx-auto px-4 py-12 max-w-3xl flex flex-col items-center justify-center">
         
         <motion.div 
           initial={{ opacity: 0, y: -20 }}
@@ -127,7 +145,7 @@ export default function SleepCalculator() {
             </div>
           </div>
           <h1 className="text-4xl md:text-5xl font-bold mb-4 py-2 leading-relaxed text-transparent bg-clip-text bg-gradient-to-r from-indigo-200 via-purple-200 to-indigo-200">
-            حیسابکەری کاتی خەوتن
+            خەوتنی زیرەک
           </h1>
           <div className="text-indigo-200/80 max-w-lg mx-auto leading-relaxed h-24 md:h-20 flex flex-col items-center justify-center">
             <div className="text-lg md:text-xl font-medium mb-1">
@@ -286,7 +304,7 @@ export default function SleepCalculator() {
                     {mode === 'sleep-now' ? 'باشترین کاتەکان بۆ هەستان لە خەو:' : 'باشترین کاتەکان بۆ خەوتن:'}
                   </h2>
                   <p className="text-indigo-200/70 text-base">
-                    ئەم کاتانە ١٥ خولەک کاتی خەولێکەوتنیان بۆ زیاد کراوە (تێکڕای کاتی خەولێکەوتنی مرۆڤ).
+                    ئەم کاتانە 15 خولەک کاتی خەولێکەوتنیان بۆ زیاد کراوە (تێکڕای کاتی خەولێکەوتنی مرۆڤ).
                   </p>
                 </div>
 
@@ -329,7 +347,14 @@ export default function SleepCalculator() {
                   ))}
                 </div>
 
-                <div className="flex justify-center">
+                {/* NEW: Smart Alarm and Reminder Integration */}
+                {results.length > 0 && (
+                  <AlarmManager 
+                    times={mode === 'sleep-now' ? results.map(r => r.time) : [`${hour}:${minute} ${period}`]}
+                  />
+                )}
+
+                <div className="flex justify-center mt-10">
                   <Button
                     as="div"
                     role="button"
@@ -348,34 +373,12 @@ export default function SleepCalculator() {
           </AnimatePresence>
         </div>
 
-        {/* Sleep Cycles Explanation Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.8, duration: 1 }}
-          className="w-full mt-16 bg-white/5 border border-white/10 rounded-3xl p-8 shadow-lg relative overflow-hidden"
-        >
-          <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl -mr-32 -mt-32 pointer-events-none"></div>
-          <div className="absolute bottom-0 left-0 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl -ml-32 -mb-32 pointer-events-none"></div>
-          
-          <div className="relative z-10">
-            <div className="flex items-center gap-4 mb-6">
-              <div className="bg-indigo-500/20 p-4 rounded-2xl text-indigo-300">
-                <Brain className="w-8 h-8" />
-              </div>
-              <h2 className="text-2xl md:text-3xl font-bold text-white">سووڕی خەو چییە؟</h2>
-            </div>
-            
-            <div className="space-y-4 text-indigo-100/80 leading-relaxed text-lg text-justify">
-              <p>
-                خەوی مرۆڤ لە چەند سووڕێک پێکدێت کە هەر یەکەیان نزیکەی <strong className="text-indigo-300 font-bold">٩٠ خولەک</strong> دەخایەنێت. لە کاتی خەوتندا، مێشک بە چەند قۆناغێکدا تێدەپەڕێت (خەوی سووک، خەوی قووڵ، و خەوی خەون بینین یان REM).
-              </p>
-              <p>
-                بۆ ئەوەی بەیانیان بەبێ ماندوێتی و بە وزەوە لە خەو هەستیت، زۆر گرنگە لە کۆتایی سووڕێکی خەودا خەبەرت ببێتەوە، نەک لە ناوەڕاستی خەوێکی قووڵدا. هەربۆیە باشترین خەو پێکدێت لە <strong className="text-purple-300 font-bold">٥ بۆ ٦ سووڕی تەواو</strong> (٧.٥ بۆ ٩ کاتژمێر).
-              </p>
-            </div>
-          </div>
-        </motion.div>
+        {/* NEW: Daily Schedule, Sound Mixer, Sleep Tracker, and Sleep Education */}
+        <DailySchedule onStartSleepMode={(target) => setGlobalSleepTarget(target)} />
+        <SoundMixer globalSleepTarget={globalSleepTarget} />
+        <SleepTracker />
+        <SleepEducation />
+
       </main>
 
       <footer className="py-8 text-center text-indigo-200/40 text-sm border-t border-white/5 mt-auto">
